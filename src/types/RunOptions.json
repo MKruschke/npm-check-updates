@@ -33,6 +33,9 @@
           "$ref": "#/definitions/Index<string>",
           "description": "A very generic object."
         },
+        "homepage": {
+          "type": "string"
+        },
         "imports": {
           "$ref": "#/definitions/Index<string>",
           "description": "A very generic object."

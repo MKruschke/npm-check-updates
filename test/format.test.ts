@@ -93,6 +93,27 @@ describe('format', () => {
     }
   })
 
+  it('--format homepage', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'npm-check-updates-'))
+    const pkgFile = path.join(tempDir, 'package.json')
+    await fs.writeFile(
+      pkgFile,
+      JSON.stringify({
+        dependencies: {
+          'hosted-git-info': '^5.0.0',
+        },
+      }),
+      'utf-8',
+    )
+    try {
+      await spawn('npm', ['install'], {}, { cwd: tempDir })
+      const { stdout } = await spawn('node', [bin, '--format', 'homepage'], {}, { cwd: tempDir })
+      stdout.should.include('https://github.com/npm/hosted-git-info')
+    } finally {
+      await removeDir(tempDir)
+    }
+  })
+
   it('--format lines', async () => {
     const stub = stubVersions(
       {

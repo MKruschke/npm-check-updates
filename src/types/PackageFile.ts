@@ -13,6 +13,7 @@ export interface PackageFile {
   // deno only
   imports?: Index<VersionSpec>
   engines?: Index<VersionSpec>
+  homepage?: string
   name?: string
   // https://nodejs.org/api/packages.html#packagemanager
   packageManager?: string

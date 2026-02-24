@@ -190,6 +190,7 @@ const extendedHelpFormat: ExtendedHelp = ({ markdown }) => {
     rows: [
       ['dep', `Prints the dependency type (dev, peer, optional) of each package.`],
       ['group', `Groups packages by major, minor, patch, and major version zero updates.`],
+      ['homepage', `Displays links to the package's homepage if specified in its package.json.`],
       ['installedVersion', 'Prints the exact current version number instead of a range.'],
       ['lines', 'Prints name@version on separate lines. Useful for piping to npm install.'],
       ['ownerChanged', `Shows if the package owner has changed.`],
@@ -793,7 +794,7 @@ const cliOptions: CLIOption[] = [
     parse: value => (typeof value === 'string' ? value.split(',') : value),
     default: [],
     type: 'readonly string[]',
-    choices: ['dep', 'group', 'ownerChanged', 'repo', 'time', 'lines', 'installedVersion'],
+    choices: ['dep', 'group', 'homepage', 'ownerChanged', 'repo', 'time', 'lines', 'installedVersion'],
     help: extendedHelpFormat,
   },
   {

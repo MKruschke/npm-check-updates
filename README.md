@@ -643,6 +643,7 @@ Modify the output formatting or show additional information. Specify one or more
 <table>
   <tr><td>dep</td><td>Prints the dependency type (dev, peer, optional) of each package.</td></tr>
   <tr><td>group</td><td>Groups packages by major, minor, patch, and major version zero updates.</td></tr>
+  <tr><td>homepage</td><td>Displays links to the package's homepage if specified in its package.json.</td></tr>
   <tr><td>installedVersion</td><td>Prints the exact current version number instead of a range.</td></tr>
   <tr><td>lines</td><td>Prints name@version on separate lines. Useful for piping to npm install.</td></tr>
   <tr><td>ownerChanged</td><td>Shows if the package owner has changed.</td></tr>

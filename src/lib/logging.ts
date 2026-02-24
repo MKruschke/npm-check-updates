@@ -11,6 +11,7 @@ import { VersionResult } from '../types/VersionResult'
 import { VersionSpec } from '../types/VersionSpec'
 import chalk from './chalk'
 import filterObject from './filterObject'
+import getPackageJson from './getPackageJson'
 import getPackageVersion from './getPackageVersion'
 import getRepoUrl from './getRepoUrl'
 import {
@@ -193,6 +194,9 @@ export async function toDependencyTable({
               : '*unknown*'
             : ''
           const toColorized = colorizeDiff(getVersion(from), to)
+          const homepageUrl = format?.includes('homepage')
+            ? (await getPackageJson(dep, { pkgFile }))?.homepage || ''
+            : ''
           const repoUrl = format?.includes('repo') ? (await getRepoUrl(dep, undefined, { pkgFile })) || '' : ''
           const publishTime = format?.includes('time') && time?.[dep] ? time[dep] : ''
           return [
@@ -202,7 +206,7 @@ export async function toDependencyTable({
             '→',
             toColorized,
             ownerChanged,
-            ...[repoUrl, publishTime].filter(x => x),
+            ...[homepageUrl, repoUrl, publishTime].filter(x => x),
           ]
         }),
     ),
