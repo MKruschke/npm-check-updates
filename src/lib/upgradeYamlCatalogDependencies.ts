@@ -78,7 +78,7 @@ function changeDependencyIn(
 }
 
 /**
- * Updates a dependency version in a Yarn `catalog` or `catalogs` section.
+ * Updates a dependency version in a PNPM/Yarn `catalog` or `catalogs` section.
  *
  * The function parses the YAML, validates it against `CatalogsConfig`, and
  * applies the change through CST tokens to preserve original formatting (such
