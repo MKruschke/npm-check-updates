@@ -83,6 +83,8 @@ async function upgradePackageData(
         const updatedYaml = updateYamlCatalogDependencies({
           fileContent: updatedContent,
           upgrade,
+          options,
+          filePath: pkgFile,
         })
         if (updatedYaml) {
           updatedContent = updatedYaml

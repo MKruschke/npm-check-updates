@@ -1,6 +1,34 @@
 import type { Document } from 'yaml'
 import { CST, isCollection, isPair, isScalar, parseDocument } from 'yaml'
 import { CatalogsConfig } from '../types/CatalogConfig'
+import type { Options } from '../types/Options'
+import programError from './programError'
+
+type UpdateYamlCatalogDependenciesArgs = {
+  fileContent: string
+  upgrade: {
+    path: string[] // e.g., ['catalogs', 'my-catalog', 'my-dep'] or ['catalog', 'my-dep']
+    newValue: string // e.g., '^2.0.0'
+  }
+  options?: Options
+  filePath?: string
+}
+
+/** Throws a user-facing error for invalid YAML syntax. */
+function throwYamlSyntaxError(
+  error: unknown,
+  { options, filePath }: { options?: Options; filePath?: string },
+): never {
+  const details = error instanceof Error ? error.message : String(error)
+  const target = filePath ? ` in ${filePath}` : ''
+  const message = `Invalid YAML syntax${target}. Unable to read catalog dependencies.\n${details}`
+
+  if (options) {
+    programError(options, message)
+  }
+
+  throw new Error(message)
+}
 
 /**
  * Change the scalar name and/or value of a collection item in a YAML document,
@@ -61,19 +89,17 @@ function changeDependencyIn(
  *
  * Returns the updated YAML string when the change succeeds. Returns the
  * original `fileContent` when the target dependency already has `newValue`.
- * Returns `null` when parsing/validation fails or when the target key/value
- * cannot be safely updated (for example, alias-based values).
+ * Returns `null` when schema validation fails or when the target key/value
+ * cannot be safely updated (for example, alias-based values). Throws on YAML
+ * syntax errors and, when `options` is provided, reports them via
+ * `programError`.
  */
 export function updateYamlCatalogDependencies({
   fileContent,
   upgrade,
-}: {
-  fileContent: string
-  upgrade: {
-    path: string[] // e.g., ['catalogs', 'my-catalog', 'my-dep'] or ['catalog', 'my-dep']
-    newValue: string // e.g., '^2.0.0'
-  }
-}): string | null {
+  options,
+  filePath,
+}: UpdateYamlCatalogDependenciesArgs): string | null {
   const { path } = upgrade
 
   if (!(path.length > 1) && path[0] !== 'catalog' && path[0] !== 'catalogs') {
@@ -93,8 +119,17 @@ export function updateYamlCatalogDependencies({
     // values. Thus, we use both an annotated AST and a JS representation; the
     // former for manipulation, and the latter for querying/validation.
     document = parseDocument(fileContent, { keepSourceTokens: true })
-    parsedContents = CatalogsConfig.parse(document.toJSON())
   } catch (err) {
+    throwYamlSyntaxError(err, { options, filePath })
+  }
+
+  if (document.errors.length > 0) {
+    throwYamlSyntaxError(document.errors[0], { options, filePath })
+  }
+
+  try {
+    parsedContents = CatalogsConfig.parse(document.toJSON())
+  } catch {
     return null
   }
 

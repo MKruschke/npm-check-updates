@@ -107,4 +107,16 @@ catalog:
   react-dom: 18.3.1
 `)
   })
+
+  it('throws on invalid yaml syntax', () => {
+    const yaml = `catalog:
+  react: [18.3.1
+`
+
+    ;(() =>
+      updateYamlCatalogDependencies({
+        fileContent: yaml,
+        upgrade: { path: ['catalog', 'react'], newValue: '19.0.0' },
+      })).should.throw('Invalid YAML syntax')
+  })
 })
