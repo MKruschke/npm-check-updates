@@ -15,10 +15,7 @@ type UpdateYamlCatalogDependenciesArgs = {
 }
 
 /** Throws a user-facing error for invalid YAML syntax. */
-function throwYamlSyntaxError(
-  error: unknown,
-  { options, filePath }: { options?: Options; filePath?: string },
-): never {
+function throwYamlSyntaxError(error: unknown, { options, filePath }: { options?: Options; filePath?: string }): never {
   const details = error instanceof Error ? error.message : String(error)
   const target = filePath ? ` in ${filePath}` : ''
   const message = `Invalid YAML syntax${target}. Unable to read catalog dependencies.\n${details}`
